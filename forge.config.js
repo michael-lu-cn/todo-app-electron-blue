@@ -1,14 +1,10 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    // 仅支持Mac平台
+    // 仅支持Mac平台和x64架构
     platform: ['darwin'],
-    arch: ['x64', 'arm64'],
-    // 添加macOS版本兼容性设置
-    osxUniversal: {
-      x64ArchFiles: "x64/**/*",
-      arm64ArchFiles: "arm64/**/*"
-    },
+    arch: ['x64'],
+    // 移除osxUniversal配置，因为不需要支持arm64
     darwinDarkModeSupport: true,
     // 设置最低macOS版本为12.0 (Monterey)
     extraResource: [],
@@ -22,7 +18,9 @@ module.exports = {
       "NSAppTransportSecurity": {
         "NSAllowsArbitraryLoads": false
       },
-      "NSRequiresAquaSystemAppearance": false
+      "NSRequiresAquaSystemAppearance": false,
+      "NSHighResolutionCapable": true,
+      "CFBundleSupportedPlatforms": ["MacOSX"]
     }
   },
   rebuildConfig: {},

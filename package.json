@@ -5,9 +5,9 @@
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "package": "MACOSX_DEPLOYMENT_TARGET=12.0 electron-forge package",
+    "make": "MACOSX_DEPLOYMENT_TARGET=12.0 electron-forge make",
+    "publish": "MACOSX_DEPLOYMENT_TARGET=12.0 electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "test": "vitest run",
     "test:watch": "vitest",
