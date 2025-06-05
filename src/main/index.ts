@@ -1,6 +1,6 @@
 /// <reference path="../../node_modules/.pnpm/electron@27.3.11/node_modules/electron/electron.d.ts" />
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as path from 'path';
+import path from 'path';
 import isDev from 'electron-is-dev';
 import { IPC_CHANNELS } from '../shared/constants/ipc-channels';
 import { setupTodoHandlers } from './handlers/todo-handlers';
@@ -20,9 +20,25 @@ declare const __dirname: string;
 // 在生产环境中应移除此行
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
+// 处理安装程序事件
+if (require('electron-squirrel-startup')) {
+  app.quit();
+}
+
 // 保持对窗口对象的全局引用，避免JavaScript对象被垃圾回收时窗口关闭
 let mainWindow: BrowserWindow | null = null;
 
+// 添加macOS特定兼容性处理
+if (process.platform === 'darwin') {
+  // 处理macOS的窗口全部关闭事件 - 在macOS上应用通常保持活跃状态
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+}
+
+// 创建主窗口
 function createWindow() {
   console.log('创建窗口...');
   console.log('isDev:', isDev);
@@ -33,11 +49,22 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    minWidth: 600,
+    minHeight: 500,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: false,
       contextIsolation: true,
     },
+    show: false, // 先不显示窗口
+    backgroundColor: '#ffffff', // 设置背景色，减少白屏时间
+  });
+
+  // 当窗口准备好后再显示，减少闪烁
+  mainWindow?.once('ready-to-show', () => {
+    if (mainWindow) {
+      mainWindow.show();
+    }
   });
 
   // 加载应用的index.html
@@ -48,7 +75,7 @@ function createWindow() {
     // 打开开发者工具
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   }
 
   // 当窗口关闭时取消引用
