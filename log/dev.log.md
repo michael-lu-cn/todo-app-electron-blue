@@ -73,6 +73,10 @@
   - 配置`osxSign`选项处理应用签名，确保应用能在macOS上正常运行
   - 添加`CFBundleVersion`和`CFBundleDisplayName`等元数据，提高应用在macOS上的集成度
   - 设置`NSRequiresAquaSystemAppearance`为false，确保应用支持macOS的深色模式
+  - 添加macOS原生菜单，提高用户体验和系统集成度
+  - 处理macOS特有的窗口事件，如窗口激活和失去焦点事件
+  - ⚠️ 避免在`forge.config.js`中使用过于复杂的配置，可能导致Electron Forge构建失败
+  - ⚠️ 签名配置应根据实际情况调整，开发阶段可能需要简化配置
 
 - **跨平台构建注意事项**：
   - 针对不同操作系统版本，需要在打包配置中明确指定最低系统版本要求
