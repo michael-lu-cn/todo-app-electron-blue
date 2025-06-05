@@ -14,7 +14,7 @@
 
 ## 安装
 
-从[GitHub Releases](https://github.com/xinguo/todo-app-electron/releases)下载最新版本：
+从[GitHub Releases](https://github.com/michael-lu-cn/todo-app-electron-blue/releases)下载最新版本：
 
 - Windows: `.exe` 或 `.zip`
 - macOS: `.dmg` 或 `.zip`
