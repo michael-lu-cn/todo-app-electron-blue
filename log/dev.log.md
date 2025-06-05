@@ -69,6 +69,10 @@
   - 使用`osxUniversal`配置支持x64和arm64架构，确保在不同芯片的Mac设备上都能正常运行
   - 添加`darwinDarkModeSupport`支持深色模式，提升用户体验
   - 配置应用元数据（Bundle ID、应用类别等）符合macOS应用规范
+  - 添加`entitlements.plist`文件配置应用权限，解决macOS安全策略限制
+  - 配置`osxSign`选项处理应用签名，确保应用能在macOS上正常运行
+  - 添加`CFBundleVersion`和`CFBundleDisplayName`等元数据，提高应用在macOS上的集成度
+  - 设置`NSRequiresAquaSystemAppearance`为false，确保应用支持macOS的深色模式
 
 - **跨平台构建注意事项**：
   - 针对不同操作系统版本，需要在打包配置中明确指定最低系统版本要求
