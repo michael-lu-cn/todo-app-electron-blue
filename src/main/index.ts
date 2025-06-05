@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/.pnpm/electron@27.3.11/node_modules/electron/electron.d.ts" />
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { IPC_CHANNELS } from '../shared/constants/ipc-channels';
@@ -30,6 +30,64 @@ let mainWindow: BrowserWindow | null = null;
 
 // 添加macOS特定兼容性处理
 if (process.platform === 'darwin') {
+  // 设置macOS应用菜单
+  const template = [
+    {
+      label: app.name,
+      submenu: [
+        { role: 'about' as const },
+        { type: 'separator' as const },
+        { role: 'services' as const },
+        { type: 'separator' as const },
+        { role: 'hide' as const },
+        { role: 'hideOthers' as const },
+        { role: 'unhide' as const },
+        { type: 'separator' as const },
+        { role: 'quit' as const }
+      ]
+    },
+    {
+      label: '编辑',
+      submenu: [
+        { role: 'undo' as const },
+        { role: 'redo' as const },
+        { type: 'separator' as const },
+        { role: 'cut' as const },
+        { role: 'copy' as const },
+        { role: 'paste' as const }
+      ]
+    },
+    {
+      label: '视图',
+      submenu: [
+        { role: 'reload' as const },
+        { role: 'forceReload' as const },
+        { role: 'toggleDevTools' as const },
+        { type: 'separator' as const },
+        { role: 'resetZoom' as const },
+        { role: 'zoomIn' as const },
+        { role: 'zoomOut' as const },
+        { type: 'separator' as const },
+        { role: 'togglefullscreen' as const }
+      ]
+    },
+    {
+      label: '窗口',
+      submenu: [
+        { role: 'minimize' as const },
+        { role: 'zoom' as const },
+        { type: 'separator' as const },
+        { role: 'front' as const },
+        { type: 'separator' as const },
+        { role: 'close' as const }
+      ]
+    }
+  ];
+
+  app.whenReady().then(() => {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template as any));
+  });
+
   // 处理macOS的窗口全部关闭事件 - 在macOS上应用通常保持活跃状态
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -66,6 +124,19 @@ function createWindow() {
       mainWindow.show();
     }
   });
+
+  // 处理macOS特定的窗口事件
+  if (process.platform === 'darwin') {
+    // 处理窗口激活事件
+    mainWindow.on('focus', () => {
+      // macOS窗口激活时的处理
+    });
+
+    // 处理窗口失去焦点事件
+    mainWindow.on('blur', () => {
+      // macOS窗口失去焦点时的处理
+    });
+  }
 
   // 加载应用的index.html
   // 在生产环境使用文件协议，在开发环境使用开发服务器

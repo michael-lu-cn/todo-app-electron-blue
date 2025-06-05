@@ -1,6 +1,14 @@
 module.exports = {
   packagerConfig: {
     asar: true,
+    // 添加macOS签名配置
+    osxSign: {
+      identity: null, // 自动选择开发证书
+      "hardened-runtime": true,
+      entitlements: "entitlements.plist",
+      "entitlements-inherit": "entitlements.plist",
+      "signature-flags": "library"
+    },
     // 仅支持Mac平台
     platform: ['darwin'],
     arch: ['x64', 'arm64'],
@@ -17,7 +25,7 @@ module.exports = {
     extendInfo: {
       "LSMinimumSystemVersion": "12.0.0",
       "NSHumanReadableCopyright": "Copyright © 2023 SimpleElectronTodo Team",
-      "CFBundleVersion": "1.0.6",
+      "CFBundleVersion": "1.0.7",
       "CFBundleDisplayName": "Simple Electron Todo",
       "NSAppTransportSecurity": {
         "NSAllowsArbitraryLoads": false
@@ -30,7 +38,11 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-      config: {},
+      config: {
+        options: {
+          icon: './assets/icon.icns'
+        }
+      },
     },
   ],
   plugins: [
