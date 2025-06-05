@@ -1,0 +1,130 @@
+name: 构建并发布应用
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置Node.js环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+
+      - name: 获取版本号
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 构建应用 - Windows
+        if: matrix.os == 'windows-latest'
+        run: pnpm run make
+
+      - name: 构建应用 - macOS
+        if: matrix.os == 'macos-latest'
+        run: pnpm run make
+
+      - name: 构建应用 - Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxtst-dev libpng++-dev
+          pnpm run make
+
+      - name: 上传构建产物 - Windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-artifacts
+          path: |
+            out/make/squirrel.windows/x64/*.exe
+            out/make/zip/win32/x64/*.zip
+
+      - name: 上传构建产物 - macOS
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-artifacts
+          path: |
+            out/make/*.dmg
+            out/make/zip/darwin/x64/*.zip
+
+      - name: 上传构建产物 - Linux
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-artifacts
+          path: |
+            out/make/deb/x64/*.deb
+            out/make/rpm/x64/*.rpm
+            out/make/zip/linux/x64/*.zip
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: 显示结构
+        run: ls -R artifacts
+        shell: bash
+
+      - name: 创建Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: 待办事项应用 ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.dmg
+            artifacts/**/*.deb
+            artifacts/**/*.rpm
+            artifacts/**/*.zip
+          body: |
+            # 待办事项应用 ${{ github.ref_name }}
+
+            ## 发布说明
+
+            这是待办事项应用的最新版本。
+
+            ## 下载
+
+            - Windows: `.exe` 或 `.zip`
+            - macOS: `.dmg` 或 `.zip`
+            - Linux: `.deb`、`.rpm` 或 `.zip`
+
+            ## 更新日志
+
+            请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 获取详细信息。
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
