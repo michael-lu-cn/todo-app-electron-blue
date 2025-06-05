@@ -1,6 +1,6 @@
 {
   "name": "simple-electron-todo",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "轻量级桌面待办事项应用",
   "main": ".webpack/main",
   "scripts": {
