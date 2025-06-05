@@ -1,6 +1,6 @@
 # 待办事项应用
 
-一个简洁、美观的跨平台待办事项管理应用，基于Electron和React构建。
+一个简洁、美观的跨平台待办事项管理应用，基于Electron和React构建，专为macOS设计。
 
 ## 功能特点
 
@@ -10,15 +10,13 @@
 - 🎨 主题定制：支持浅色/深色模式和8种主题颜色
 - 📅 截止日期：设置并追踪任务截止日期
 - ⭐ 优先级：为任务设置优先级（低/中/高）
-- 💻 跨平台：支持Windows、macOS和Linux
+- 💻 专为macOS优化
 
 ## 安装
 
 从[GitHub Releases](https://github.com/michael-lu-cn/todo-app-electron-blue/releases)下载最新版本：
 
-- Windows: `.exe` 或 `.zip`
 - macOS: `.dmg` 或 `.zip`
-- Linux: `.deb`、`.rpm` 或 `.zip`
 
 ## 开发
 
@@ -60,7 +58,7 @@ pnpm release
 3. 推送到GitHub：
 
 ```bash
-pnpm release:push
+git push origin main && git push origin v版本号
 ```
 
 4. GitHub Actions将自动构建应用并创建Release

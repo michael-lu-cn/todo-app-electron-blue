@@ -7,11 +7,7 @@ on:
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: macos-latest
 
     steps:
       - name: 检出代码
@@ -37,64 +33,16 @@ jobs:
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
-      - name: 构建应用 - Windows
-        if: matrix.os == 'windows-latest'
-        run: pnpm run make
-
       - name: 构建应用 - macOS
-        if: matrix.os == 'macos-latest'
         run: pnpm run make
 
-      - name: 构建应用 - Linux
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxtst-dev libpng++-dev
-          pnpm run make
-
-      - name: 上传构建产物 - Windows
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-artifacts
-          path: |
-            out/make/squirrel.windows/x64/*.exe
-            out/make/zip/win32/x64/*.zip
-
-      - name: 上传构建产物 - macOS
-        if: matrix.os == 'macos-latest'
+      - name: 上传构建产物
         uses: actions/upload-artifact@v3
         with:
           name: macos-artifacts
           path: |
             out/make/*.dmg
             out/make/zip/darwin/x64/*.zip
-
-      - name: 上传构建产物 - Linux
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-artifacts
-          path: |
-            out/make/deb/x64/*.deb
-            out/make/rpm/x64/*.rpm
-            out/make/zip/linux/x64/*.zip
-
-  publish:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v3
-
-      - name: 下载所有构建产物
-        uses: actions/download-artifact@v3
-        with:
-          path: artifacts
-
-      - name: 显示结构
-        run: ls -R artifacts
-        shell: bash
 
       - name: 创建Release
         id: create_release
@@ -105,11 +53,8 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            artifacts/**/*.exe
-            artifacts/**/*.dmg
-            artifacts/**/*.deb
-            artifacts/**/*.rpm
-            artifacts/**/*.zip
+            out/make/*.dmg
+            out/make/zip/darwin/x64/*.zip
           body: |
             # 待办事项应用 ${{ github.ref_name }}
 
@@ -119,9 +64,7 @@ jobs:
 
             ## 下载
 
-            - Windows: `.exe` 或 `.zip`
             - macOS: `.dmg` 或 `.zip`
-            - Linux: `.deb`、`.rpm` 或 `.zip`
 
             ## 更新日志
 
