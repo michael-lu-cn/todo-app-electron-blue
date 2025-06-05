@@ -1,13 +1,6 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    osxSign: {
-      identity: null, // 自动选择开发证书
-      hardenedRuntime: true,
-      entitlements: 'entitlements.plist',
-      'entitlements-inherit': 'entitlements.plist',
-      'signature-flags': 'library'
-    },
     // 仅支持Mac平台
     platform: ['darwin'],
     arch: ['x64', 'arm64'],
@@ -37,11 +30,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-      config: {
-        options: {
-          icon: './assets/icon.icns'
-        }
-      },
+      config: {},
     },
   ],
   plugins: [
