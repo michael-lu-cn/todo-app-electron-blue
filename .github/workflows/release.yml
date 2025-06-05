@@ -44,7 +44,6 @@ jobs:
         run: |
           ls -la out || echo "out目录不存在"
           find . -type d -name "out" | xargs ls -la
-          find . -name "*.dmg" || echo "未找到dmg文件"
           find . -name "*.zip" || echo "未找到zip文件"
         shell: bash
 
@@ -57,7 +56,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ./out/**/*.dmg
             ./out/**/*.zip
           body: |
             # 待办事项应用 ${{ github.ref_name }}
@@ -68,7 +66,7 @@ jobs:
 
             ## 下载
 
-            - macOS: `.dmg` 或 `.zip`
+            - macOS: `.zip`
 
             ## 更新日志
 
