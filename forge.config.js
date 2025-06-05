@@ -5,6 +5,20 @@ module.exports = {
     // 仅支持Mac平台
     platform: ['darwin'],
     arch: ['x64', 'arm64'],
+    // 添加macOS版本兼容性设置
+    osxUniversal: {
+      x64ArchFiles: "x64/**/*",
+      arm64ArchFiles: "arm64/**/*"
+    },
+    darwinDarkModeSupport: true,
+    // 设置最低macOS版本为12.0 (Monterey)
+    extraResource: [],
+    appBundleId: "com.simple-electron-todo",
+    appCategoryType: "public.app-category.productivity",
+    extendInfo: {
+      "LSMinimumSystemVersion": "12.0.0",
+      "NSHumanReadableCopyright": "Copyright © 2023 SimpleElectronTodo Team"
+    }
   },
   rebuildConfig: {},
   makers: [
